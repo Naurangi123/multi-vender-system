@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Route, Routes } from 'react-router-dom';
+import Sidebar from './components/Sidebar';
+import Dashboard from './pages/Dashboard';
+import Employees from './pages/Employee';
+import Departments from './pages/Departments';
+import Settings from './pages/Settings';
+import ProductListing from './components/ProductList';
+import VendorProfile from './components/VendorProfile';
+import Analytics from './pages/Analytics';
+import ProfileUpdate from './pages/Profileupdate';
+import CreateProduct from './components/AddProduct';
+import UpdateProduct from './components/UpdateProduct';
+import ProductAnalytics from './components/ProductRanking';
+import NotFound from './pages/NotFound';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const App = () => {
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+      <div className="flex min-h-screen">
+        <Sidebar />
+        <div className="flex-1 p-6 bg-gray-100">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/departments" element={<Departments />} />
+            <Route path="/products" element={<ProductListing />} />
+            <Route path="/profile" element={<VendorProfile />} />
+            {/* <Route path="/departments/finance" element={<Finance/>} /> */}
 
-export default App
+            <Route path="/employees" element={<Employees />} />
+            <Route path="/employees/new" element={<Employees />} />
+
+            <Route path="/products/create" element={<CreateProduct />} />
+            <Route path="/products/edit/:id" element={<UpdateProduct />} />
+
+            <Route path="/analytic" element={<ProductAnalytics />} />
+            <Route path="/analytics" element={<Analytics />} />
+
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/settings/updateprofile" element={<ProfileUpdate />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default App;
