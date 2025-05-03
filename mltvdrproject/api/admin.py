@@ -4,6 +4,11 @@ from .models import *
 admin.site.register(Category)
 admin.site.register(ProductImage)
 admin.site.register(ProductVariant)
+admin.site.register(Cart)
+admin.site.register(CartItem)
+admin.site.register(Coupon)
+admin.site.register(Order)
+admin.site.register(OrderItem)
 
 @admin.register(Vendor)
 class VendorAdmin(admin.ModelAdmin):

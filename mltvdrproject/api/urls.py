@@ -10,6 +10,11 @@ urlpatterns = [
     path('products/', ProductListCreateAPIView.as_view(), name='product-list-create'),
     path('products/<int:pk>/', ProductDetailAPIView.as_view(), name='product-detail'),
     
+    # Product Varient
+    path('pvarients/', ProductVarientAPIView.as_view(), name='product-list-create'),
+    path('pvarients/<int:pk>/', ProductVarientDetailAPIView.as_view(), name='product-detail'),
+    
+    
     #Category
     path('categories/', CategoryListCreateView.as_view(), name='category-list-create'),
     path('categories/<int:pk>/', CategoryDetailView.as_view(), name='category-detail'),

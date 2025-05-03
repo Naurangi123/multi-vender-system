@@ -1,12 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAdminUser,IsAuthenticated,IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
+from .permissions import *
 from .models import *
 from .serializers import *
 
 
 class VendorListCreateAPIView(APIView):
+    permission_classes=[]
+    
     def get(self, request):
         verders=Vendor.objects.all()
         serializer=VendorSerializer(verders,many=True)
@@ -57,6 +61,7 @@ class CategoryDetailView(APIView):
 
 ### PRODUCTS ###
 class ProductListCreateAPIView(APIView):
+    permission_classes=[IsVendor,IsAuthenticatedOrReadOnly]
     def get(self, request):
         return Response(ProductSerializer(Product.objects.all(), many=True).data)
     def post(self, request):
@@ -64,16 +69,48 @@ class ProductListCreateAPIView(APIView):
         return Response(s.data, status=201) if s.is_valid() and s.save() else Response(s.errors, status=400)
 
 class ProductDetailAPIView(APIView):
+    permission_classes=[IsVendor,IsAdmin,IsAuthenticatedOrReadOnly]
     def get(self, request, pk):
-        return Response(ProductSerializer(get_object_or_404(Product, pk=pk)).data)
+        product=get_object_or_404(Product, pk=pk)
+        serializer=ProductSerializer(product)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
     def put(self, request, pk):
-        p = get_object_or_404(Product, pk=pk)
-        s = ProductSerializer(p, data=request.data, partial=True)
-        return Response(s.data) if s.is_valid() and s.save() else Response(s.errors, status=400)
+        product = get_object_or_404(Product, pk=pk)
+        serializer = ProductSerializer(product, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     def delete(self, request, pk):
         get_object_or_404(Product, pk=pk).delete()
         return Response(status=204)
+    
+class ProductVarientAPIView(APIView):
+    
+    permission_classes=[IsVendor,IsAuthenticated]
+    
+    def get(self, request):
+        return Response(ProductVariantSerializer(ProductVariant.objects.all(), many=True).data)
+    def post(self, request):
+        s = ProductVariantSerializer(data=request.data)
+        return Response(s.data, status=201) if s.is_valid() and s.save() else Response(s.errors, status=400)
 
+class ProductVarientDetailAPIView(APIView):
+    
+    permission_classes=[IsVendor,IsAuthenticated]
+    
+    def get(self, request, pk):
+        return Response(ProductVariantSerializer(get_object_or_404(ProductVariant, pk=pk)).data)
+    def put(self, request, pk):
+        p = get_object_or_404(ProductVariant, pk=pk)
+        s = ProductVariantSerializer(p, data=request.data, partial=True)
+        return Response(s.data) if s.is_valid() and s.save() else Response(s.errors, status=400)
+    def delete(self, request, pk):
+        get_object_or_404(ProductVariant, pk=pk).delete()
+        return Response(status=204)
+    
 ### ORDERS ###
 class OrderListCreateAPIView(APIView):
     def get(self, request):

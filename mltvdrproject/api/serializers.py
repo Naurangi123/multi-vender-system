@@ -104,9 +104,3 @@ class CouponSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coupon
         fields = '__all__'
-
-# OrderCoupon
-class OrderCouponSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderCoupon
-        fields = '__all__'
