@@ -12,6 +12,11 @@ import CreateProduct from './components/AddProduct';
 import UpdateProduct from './components/UpdateProduct';
 import ProductAnalytics from './components/ProductRanking';
 import NotFound from './pages/NotFound';
+import ProductDetail from './components/ProductDetails';
+import ProductCart from './components/ProductCart';
+import PaymentPage from './components/Payment';
+import ManageProductsPage from './components/ManageProducts';
+
 
 const App = () => {
   return (
@@ -24,13 +29,15 @@ const App = () => {
             <Route path="/departments" element={<Departments />} />
             <Route path="/products" element={<ProductListing />} />
             <Route path="/profile" element={<VendorProfile />} />
-            {/* <Route path="/departments/finance" element={<Finance/>} /> */}
+            <Route path="/product-detail" element={<ProductDetail/>} />
+            <Route path="/products/create" element={<CreateProduct />} />
+            <Route path="/products/edit/:id" element={<UpdateProduct />} />
+            <Route path='/products/manage-product' element={<ManageProductsPage/>}/>
+            <Route path='/cart' element={<ProductCart/>}/>
+            <Route path='/payment' element={<PaymentPage/>}/>
 
             <Route path="/employees" element={<Employees />} />
             <Route path="/employees/new" element={<Employees />} />
-
-            <Route path="/products/create" element={<CreateProduct />} />
-            <Route path="/products/edit/:id" element={<UpdateProduct />} />
 
             <Route path="/analytic" element={<ProductAnalytics />} />
             <Route path="/analytics" element={<Analytics />} />

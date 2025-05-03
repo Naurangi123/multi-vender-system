@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Cart = () => {
+const ProductCart = () => {
   const [cart, setCart] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
@@ -49,4 +49,4 @@ const Cart = () => {
   );
 };
 
-export default Cart;
+export default ProductCart;

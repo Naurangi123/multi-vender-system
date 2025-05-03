@@ -41,6 +41,7 @@ const Sidebar = () => {
       children: [
         { name: 'Add Product', path: '/products/create' },
         { name: 'Update Product', path: '/products/edit/:id' },
+        { name: 'Manage Product', path: '/products/manage-product' },
       ],
     },
     {

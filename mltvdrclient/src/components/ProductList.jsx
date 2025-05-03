@@ -1,6 +1,7 @@
 import React from 'react';
-
+import { useNavigate } from 'react-router-dom';
 const ProductListing = () => {
+  const navigate=useNavigate()
   const products = [
     {
       id: 1,
@@ -32,6 +33,10 @@ const ProductListing = () => {
     },
   ];
 
+  const seeDetail=()=>{
+    navigate('/product-detail')
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -45,7 +50,7 @@ const ProductListing = () => {
               alt={product.name}
               className="w-full h-48 object-cover rounded-t-lg"
             />
-            <div className="p-4">
+            <div className="p-4" onClick={()=>seeDetail()}>
               <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
               <p className="text-sm text-gray-500">{product.description}</p>
               <div className="flex justify-between items-center mt-4">
