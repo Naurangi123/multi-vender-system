@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import { getProduct } from '../services/apiServices';
 
 const Dashboard = () => {
   // eslint-disable-next-line no-unused-vars
@@ -13,22 +15,18 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 
-  useEffect(() => {
-    setProductList([
-      { name: 'Product A', category: 'Electronics', status: 'In Stock', price: '₹299', launchDate: '2022-06-10' },
-      { name: 'Product B', category: 'Clothing', status: 'Out of Stock', price: '₹49.99', launchDate: '2021-11-15' },
-      { name: 'Product C', category: 'Home Appliances', status: 'In Stock', price: '₹159.99', launchDate: '2020-09-05' },
-      { name: 'Product D', category: 'Sports', status: 'In Stock', price: '₹129.99', launchDate: '2021-01-20' },
-    ]);
-  }, []);
+  const fetchProducts = async () => {
+    try {
+      const data = await getProduct();
+      setProductList(data)
+    } catch (error) {
+      toast.error("Something Went Error", error)
+    }
+  }
 
-  const filteredProducts = productList.filter((product) => {
-    return (
-      (product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      (selectedCategory === 'All' || product.category === selectedCategory)
-    );
-  });
+  useEffect(() => {
+    fetchProducts()
+  }, [])
 
   return (
     <div className="flex space-x-6 p-6">
@@ -86,8 +84,8 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredProducts.map((product) => (
-                <tr key={product.name}>
+              {productList.map((product) => (
+                <tr key={product.id}>
                   <td className="p-2 border">{product.name}</td>
                   <td className="p-2 border">{product.category}</td>
                   <td className="p-2 border">{product.status}</td>

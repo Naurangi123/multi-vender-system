@@ -1,16 +1,20 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate,Outlet } from 'react-router-dom';
+import { ACCESS_TOKEN } from '../constants';
 import { useCurrentUser } from '../hooks/useUser';
 
+const RoleProtectedRoute = ({ allowedRoles }) => {
+  const {role}=useCurrentUser()
+  const isAuthenticated = sessionStorage.getItem(ACCESS_TOKEN);
 
-const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { user } = useCurrentUser();
-
-  if (!user) return <Navigate to="/login" replace />;
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
   }
 
-  return children;
+  if (allowedRoles && !allowedRoles.includes(role)) {
+    return <Navigate to="/" />; 
+  }
+
+  return <Outlet/>;
 };
 
-export default ProtectedRoute;
+export default RoleProtectedRoute;

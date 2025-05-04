@@ -1,5 +1,6 @@
-import { Link, Navigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import { ACCESS_TOKEN } from '../constants';
 import {
   MdDashboard,
   MdApartment,
@@ -10,62 +11,76 @@ import {
   MdAccountCircle,
   MdSecurity,
   MdDarkMode,
-  MdPerson
+  MdPerson,
+  MdOutlineAppRegistration
 } from 'react-icons/md';
 import { CiLight } from "react-icons/ci";
 import { AiFillProduct } from "react-icons/ai";
+import { IoIosLogIn } from "react-icons/io";
+import { useNavigate } from 'react-router-dom';
 
-
-
+import { RiLogoutCircleRLine } from "react-icons/ri";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
-
+  const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem(ACCESS_TOKEN));
+  const navigate = useNavigate()
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
   const toggleDropdown = (name) => {
     setOpenDropdown(openDropdown === name ? null : name);
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem(ACCESS_TOKEN);
+    setIsAuthenticated(false);
+    navigate('/login');
+  };
 
   const navLinks = [
-    { name: 'Dashboard', path: '/', icon: <MdDashboard size={20} /> },
-    { name: 'Profile', path: '/profile', icon: <MdPerson size={20} /> },
-    {
-      name: 'Product',
-      path: '/products',
-      icon: <AiFillProduct size={20} />,
-      children: [
-        { name: 'Add Product', path: '/products/create' },
-        { name: 'Update Product', path: '/products/edit/:id' },
-        { name: 'Manage Product', path: '/products/manage-product' },
-      ],
-    },
-    {
-      name: 'Employees',
-      path: '/employees',
-      icon: <MdPeople size={20} />,
-      children: [
-        { name: 'All Employees', path: '/employees' },
-        { name: 'Add New', path: '/employees/new' },
-      ],
-    },
-    { name: 'Product Analytic', path: '/analytic', icon: <MdEventAvailable size={20} /> },
-    { name: 'Analytics', path: '/analytics', icon: <MdBarChart size={20} /> },
-    {
-      name: 'Settings',
-      path: '/settings',
-      icon: <MdSettings size={20} />,
-      children: [
-        { name: 'Profile', path: '/settings/updateprofile', icon: <MdAccountCircle size={18} /> },
-        { name: 'Security', path: '/settings/security', icon: <MdSecurity size={18} /> },
-      ],
-    },
+    { name: 'Home', path: '/', icon: <MdApartment size={20} /> },
+    ...(isAuthenticated ? [
+      { name: 'Dashboard', path: '/dashboard', icon: <MdDashboard size={20} /> },
+      { name: 'Profile', path: '/profile', icon: <MdPerson size={20} /> },
+      {
+        name: 'Product',
+        path: '/products',
+        icon: <AiFillProduct size={20} />,
+        children: [
+          { name: 'Add Product', path: '/products/create' },
+          { name: 'Update Product', path: '/products/edit/:id' },
+          { name: 'Manage Product', path: '/products/manage-product' },
+        ],
+      },
+      {
+        name: 'Employees',
+        path: '/employees',
+        icon: <MdPeople size={20} />,
+        children: [
+          { name: 'All Employees', path: '/employees' },
+          { name: 'Add New', path: '/employees/new' },
+        ],
+      },
+      { name: 'Product Analytics', path: '/analytics', icon: <MdEventAvailable size={20} /> },
+      { name: 'Analytics', path: '/analytics', icon: <MdBarChart size={20} /> },
+      {
+        name: 'Settings',
+        path: '/settings',
+        icon: <MdSettings size={20} />,
+        children: [
+          { name: 'Profile', path: '/settings/updateprofile', icon: <MdAccountCircle size={18} /> },
+          { name: 'Security', path: '/settings/security', icon: <MdSecurity size={18} /> },
+        ],
+      },
+    ] : []),
+    ...(isAuthenticated ? [] : [
+      { name: 'Login', path: '/login', icon: <IoIosLogIn size={20} /> },
+      { name: 'Register', path: '/register', icon: <MdOutlineAppRegistration size={20} /> },
+    ]),
   ];
-
   return (
     <div className={`min-h-screen flex ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}>
       <div className={`transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'} bg-inherit`}>
@@ -114,7 +129,15 @@ const Sidebar = () => {
           ))}
         </ul>
 
-        <div className="mt-4 p-4">
+        <div className="mt-4 p-4 flex flex-col gap-2">
+          {isAuthenticated && (
+            <button
+              onClick={handleLogout}
+              className="bg-gray-600 text-white py-2 px-4 rounded-md w-full text-sm"
+            >
+              <RiLogoutCircleRLine size={20} />
+            </button>
+          )}
           <button
             onClick={toggleDarkMode}
             className="bg-gray-600 text-white py-2 px-4 rounded-md w-full text-sm"

@@ -1,18 +1,33 @@
-
 import React, { useState } from "react";
-import axios from "axios";
+import { ACCESS_TOKEN,REFRESH_TOKEN } from "../../constants";
+import { Login as loginUser } from "../../services/apiServices";
+import { ToastContainer,toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    username:"",
+    password:""
+  });
+  const [loading,setLoading]=useState(false)
+  const navigate=useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8000/api/token/", { email, password });
-      localStorage.setItem("access_token", response.data.access);
+      const res = await loginUser(formData);
+      if (res?.access && res?.refresh) {
+        sessionStorage.setItem(ACCESS_TOKEN, res.access);
+        sessionStorage.setItem(REFRESH_TOKEN, res.refresh);
+        toast.success('Login successful!');
+        setTimeout(()=>{
+          navigate('/');
+        },200)
+      }
     } catch (error) {
-      console.error("Login failed", error);
+      toast.error(error?.message || 'Login failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -22,29 +37,30 @@ const Login = () => {
         <h2 className="text-2xl font-semibold text-center text-gray-700">Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            type="email"
+            type="text"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Username"
+            value={formData.username}
+            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
             required
           />
           <input
             type="password"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formData.password}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             required
           />
           <button
             type="submit"
             className="w-full px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            Login
+            {loading ? 'Logging in...' : 'Sign In'}
           </button>
         </form>
       </div>
+      <ToastContainer/>
     </div>
   );
 };

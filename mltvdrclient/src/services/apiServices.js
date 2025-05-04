@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 import { ACCESS_TOKEN } from '../constants';
-import axiosInstance from './axiosInstance';
+import axiosInstance from './axiosInstances'
 
 
 const getData = async (url) => {
@@ -43,15 +43,42 @@ const postData = async (url, data) => {
 //     }
 // };
 
+
+export const getProduct = async () => {
+    try {
+      const response = await getData(`/api/products/`);
+      return response;
+    } catch (error) {
+      console.error("API Error:", error);
+      toast.error("Something went wrong while fetching user");
+      throw error;
+    }
+  };
+
+
+  export const getProductDetail = async (id) => {
+    try {
+      const response = await getData(`/api/products/${id}/`);
+      return response;
+    } catch (error) {
+      console.error("API Error:", error);
+      toast.error("Something went wrong while fetching user");
+      throw error;
+    }
+  };
+
 export const getUser = async () => {
     try {
-        const response = await getData(`/auth/api/user/`);
-        return response;
+      const response = await getData(`/auth/user/`);
+      return response;
     } catch (error) {
-        toast.error("something went wrong", error.message);
-        throw error;
+      console.error("API Error:", error);
+      toast.error("Something went wrong while fetching user");
+      throw error;
     }
-}
+  };
+  
+  
 
 const registerData = async (url, data) => {
     try {
@@ -65,7 +92,7 @@ const registerData = async (url, data) => {
 
 export const Signup = async (data) => {
     try {
-        return await registerData(`/auth/api/register/`, data);
+        return await registerData(`/auth/register/`, data);
     } catch (error) {
         console.log("Signup error", error);
         throw error;
@@ -74,7 +101,7 @@ export const Signup = async (data) => {
 
 export const Login = async (data) => {
     try {
-        const response = await postData(`/auth/api/token/`, data);
+        const response = await postData(`/auth/login/`, data);
         toast.success("Login successful!");
         return response.data;
     } catch (error) {
@@ -87,7 +114,7 @@ export const Login = async (data) => {
 
 export const tokenRefresh = async (data) => {
     try {
-        return await postData(`/auth/api/token/refresh/`, data);
+        return await postData(`/auth/token/refresh/`, data);
     } catch (error) {
         console.error('Token refresh error:', error);
         return null;

@@ -61,7 +61,7 @@ class CategoryDetailView(APIView):
 
 ### PRODUCTS ###
 class ProductListCreateAPIView(APIView):
-    permission_classes=[IsVendor,IsAuthenticatedOrReadOnly]
+    permission_classes=[IsVendor,IsAuthenticated]
     def get(self, request):
         return Response(ProductSerializer(Product.objects.all(), many=True).data)
     def post(self, request):
@@ -69,7 +69,7 @@ class ProductListCreateAPIView(APIView):
         return Response(s.data, status=201) if s.is_valid() and s.save() else Response(s.errors, status=400)
 
 class ProductDetailAPIView(APIView):
-    permission_classes=[IsVendor,IsAdmin,IsAuthenticatedOrReadOnly]
+    permission_classes=[IsVendor,IsAuthenticated]
     def get(self, request, pk):
         product=get_object_or_404(Product, pk=pk)
         serializer=ProductSerializer(product)

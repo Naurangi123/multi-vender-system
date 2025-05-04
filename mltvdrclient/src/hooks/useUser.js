@@ -1,23 +1,26 @@
-import { useEffect, useState } from "react"
-import { getUser } from "../services/apiServices"
+import { useEffect, useState } from "react";
+import { getUser } from "../services/apiServices";
 
+export const useCurrentUser = () => {
+  const [user, setUser] = useState([]);
+  const [role, setRole] = useState(null);
 
-
-export const useCurrentUser=()=>{
-    const[user,setUser]=useState(null)
-
-    const fetchUser=()=>{
-        try {
-            const data=getUser();
-            setUser(data)
-        } catch (error) {
-            console.log(error)
-            
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await getUser(); 
+        if (userData) {
+          setUser(userData);
+          setRole(userData.role || null);
         }
-    }
-    useEffect(()=>{
-        fetchUser()
-    },[])
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+        setUser(null); 
+        setRole(null); 
+      }
+    };
 
-    return {user}
-}
+    fetchUser();
+  }, []);
+  return { user, role };
+};
